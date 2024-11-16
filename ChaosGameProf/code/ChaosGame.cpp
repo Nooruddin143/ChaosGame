@@ -86,6 +86,20 @@ int main()
 		****************************************
 		*/
 		window.clear();
+
+		Font font;
+		
+		if (!font.loadFromFile("Bubblegum.ttf"))
+		{
+			cout << "Error loading font" << endl;
+		};
+
+		Text text("Click three points to form a triangle, then another to begin the chaos!", font);
+		text.setCharacterSize(24);
+		text.setFillColor(Color::White);
+
+		window.draw(text);
+
 		for (int i = 0; i < vertices.size(); i++)
 		{
 			RectangleShape rect(Vector2f(10, 10));
@@ -99,7 +113,7 @@ int main()
 		{
 			RectangleShape rect(Vector2f(10, 10));
 			rect.setPosition(Vector2f(points[i].x, points[i].y));
-			rect.setFillColor(Color::Blue);
+			rect.setFillColor(Color::White);
 			window.draw(rect);
 		}
 
