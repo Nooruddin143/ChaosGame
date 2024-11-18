@@ -6,141 +6,133 @@
 #include <sstream>
 #include <vector>
 #include <ctime>
-//Make the code easier to type with "using namespace"
+
+// Make the code easier to type with "using namespace"
 using namespace sf;
 using namespace std;
 
 int main()
 {
-	srand(time(0));
-	// Create a video mode object
-	VideoMode vm(1000, 800);
+    srand(static_cast<unsigned>(time(0)));
 
-	// Create and open a window for the game
-	RenderWindow window(vm, "Chaos Game!!", Style::Default);
+    // Create a video mode object
+    VideoMode vm(1000, 800);
 
-	vector<Vector2f> vertices;
-	vector<Vector2f> points;
+    // Create and open a window for the game
+    RenderWindow window(vm, "Chaos Game with Hexagon!!", Style::Default);
 
-	while (window.isOpen())
-	{
-		/*
-		****************************************
-		Handle the players input
-		****************************************
-		*/
-		Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == Event::Closed)
-			{
-				// Quit the game when the window is closed
-				window.close();
-			}
-			if (event.type == sf::Event::MouseButtonPressed)
-			{
-				if (event.mouseButton.button == sf::Mouse::Left)
-				{
-					std::cout << "the left button was pressed" << std::endl;
-					std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-					std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+    // Initialize vectors to store vertices and points
+    vector<Vector2f> vertices;
+    vector<Vector2f> points;
 
-					if (vertices.size() < 3)
-					{
-						vertices.push_back(Vector2f(event.mouseButton.x, event.mouseButton.y));
-					}
-					else if (points.size() == 0)
-					{
-						///fourth click
-						///push back to points vector
-						points.push_back(Vector2f(event.mouseButton.x, event.mouseButton.y));
-					}
-				}
-			}
-		}
+    // Load font
+    Font font;
+    if (!font.loadFromFile("Bubblegum.ttf")) {
+        cout << "Error loading font" << endl;
+        return -1; // Exit if font loading fails
+    }
 
+    while (window.isOpen())
+    {
+        /*
+        ****************************************
+        Handle the player's input
+        ****************************************
+        */
+        Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::Closed)
+            {
+                // Quit the game when the window is closed
+                window.close();
+            }
+            if (event.type == Event::MouseButtonPressed)
+            {
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    cout << "The left button was pressed" << endl;
+                    cout << "Mouse x: " << event.mouseButton.x << endl;
+                    cout << "Mouse y: " << event.mouseButton.y << endl;
 
-		if (Keyboard::isKeyPressed(Keyboard::Escape))
-		{
-			window.close();
-		}
-		/*
-		****************************************
-		Update
-		****************************************
-		*/
-		
-		if (points.size() > 0)
-		{
-			///generate more point(s)
-			///select random vertex
-			
-			int vert = rand() % 3;
-			Vector2f randVert = vertices.at(vert);
+                    if (vertices.size() < 6)
+                    {
+                        // Store up to 6 vertices for hexagon
+                        vertices.push_back(Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)));
+                    }
+                    else if (points.empty())
+                    {
+                        // After 6 vertices, start with an initial point for chaos game
+                        points.push_back(Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)));
+                    }
+                }
+            }
+        }
 
-			///calculate midpoint between random vertex and the last point in the vector
-			Vector2f newPoint(
-				(randVert.x + points.at(points.size() - 1).x) / 2,
-				(randVert.y + points.at(points.size() - 1).y) / 2
-			);
+        // Handle exit on pressing ESC key
+        if (Keyboard::isKeyPressed(Keyboard::Escape))
+        {
+            window.close();
+        }
 
-			///push back the newly generated coord.
-			points.push_back(newPoint);
-		}
+        /*
+        ****************************************
+        Update
+        ****************************************
+        */
+        if (points.size() > 0)
+        {
+            // Generate more points
+            int vert = rand() % 6; // Choose one of the 6 vertices
+            Vector2f randVert = vertices.at(vert);
 
-		/*
-		****************************************
-		Draw
-		****************************************
-		*/
-		window.clear();
+            // Calculate midpoint between random vertex and the last point
+            Vector2f lastPoint = points.back();
+            Vector2f newPoint(
+                (2 * randVert.x + lastPoint.x) / 2.0f,
+                (2 * randVert.y + lastPoint.y) / 2.0f
+            );
 
-		Font font;
-		
-		if (!font.loadFromFile("Bubblegum.ttf"))
-		{
-			cout << "Error loading font" << endl;
-		};
+            // Push back the newly generated coordinate
+            points.push_back(newPoint);
+        }
 
-		Text text("Click three points to form a triangle, then another to begin the chaos!", font);
-		text.setCharacterSize(24);
-		text.setFillColor(Color::Red);
+        /*
+        ****************************************
+        Draw
+        ****************************************
+        */
+        window.clear();
 
-		window.draw(text);
+        // Display the text guide
+        Text text("Click six points to form a hexagon, then another to begin the chaos!", font);
+        text.setCharacterSize(24);
+        text.setFillColor(Color::Red);
+        text.setPosition(10, 10); // Position it at the top of the screen
 
-		for (int i = 0; i < vertices.size(); i++)
-		{
-			RectangleShape rect(Vector2f(2, 2));
-			rect.setPosition(Vector2f(vertices[i].x, vertices[i].y));
-			rect.setFillColor(Color::Blue);
-			window.draw(rect);
-		}
+        window.draw(text);
 
-		//display points
-		for (int i = 0; i < points.size(); i++)
-		{
-			RectangleShape rect(Vector2f(1, 1));
-			rect.setPosition(Vector2f(points[i].x, points[i].y));
-			rect.setFillColor(Color::White);
-			window.draw(rect);
-		}
-		//for (const auto& vertex : vertices)
-		//{
-		//	CircleShape shape(3);
-		//	shape.setPosition(vertex.x - 1.5f, vertex.y - 1.5f); // Center point
-		//	shape.setFillColor(Color::Blue);
-		//	window.draw(shape);
-		//}
+        // Draw vertices as hexagons
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            RectangleShape rect(Vector2f(2, 2));
+            rect.setPosition(Vector2f(vertices[i].x, vertices[i].y));
+            rect.setFillColor(Color::Blue);
+            window.draw(rect);
+        }
 
-		//// Display points generated by the chaos game
-		//for (const auto& point : points)
-		//{
-		//	CircleShape shape(1);
-		//	shape.setPosition(point.x - 0.5f, point.y - 0.5f); // Center point
-		//	shape.setFillColor(Color::White);
-		//	window.draw(shape);
-		//}
+        //display points
+        for (int i = 0; i < points.size(); i++)
+        {
+            RectangleShape rect(Vector2f(1, 1));
+            rect.setPosition(Vector2f(points[i].x, points[i].y));
+            rect.setFillColor(Color::White);
+            window.draw(rect);
+        }
 
-		window.display();
-	}
+        // Display everything on the window
+        window.display();
+    }
+
+    return 0;
 }
