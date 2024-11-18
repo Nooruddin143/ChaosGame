@@ -89,8 +89,8 @@ int main()
             // Calculate midpoint between random vertex and the last point
             Vector2f lastPoint = points.back();
             Vector2f newPoint(
-                (2 * randVert.x + lastPoint.x) / 2.0f,
-                (2 * randVert.y + lastPoint.y) / 2.0f
+                (2 * randVert.x + lastPoint.x) / 3.0f,
+                (2 * randVert.y + lastPoint.y) / 3.0f
             );
 
             // Push back the newly generated coordinate
