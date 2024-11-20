@@ -13,7 +13,7 @@ using namespace std;
 
 int main()
 {
-    srand(static_cast<unsigned>(time(0)));
+    srand(time(0));
 
     // Create a video mode object
     VideoMode vm(1000, 800);
@@ -126,7 +126,7 @@ int main()
         {
             RectangleShape rect(Vector2f(1, 1));
             rect.setPosition(Vector2f(points[i].x, points[i].y));
-            rect.setFillColor(Color::White);
+            rect.setFillColor(Color::Blue);
             window.draw(rect);
         }
 
