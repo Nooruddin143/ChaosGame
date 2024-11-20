@@ -60,7 +60,7 @@ int main()
                         // Store up to 6 vertices for hexagon
                         vertices.push_back(Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)));
                     }
-                    else if (points.empty())
+                    else if (points.size() == 0)
                     {
                         // After 6 vertices, start with an initial point for chaos game
                         points.push_back(Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)));
@@ -115,9 +115,9 @@ int main()
         // Draw vertices as hexagons
         for (int i = 0; i < vertices.size(); i++)
         {
-            RectangleShape rect(Vector2f(2, 2));
+            RectangleShape rect(Vector2f(3, 3));
             rect.setPosition(Vector2f(vertices[i].x, vertices[i].y));
-            rect.setFillColor(Color::Blue);
+            rect.setFillColor(Color::Red);
             window.draw(rect);
         }
 
